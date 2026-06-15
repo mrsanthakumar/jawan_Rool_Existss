@@ -1,0 +1,1628 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Jawan Bhavan Room Booking Management</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      height: 45px;
+    }
+
+    textarea {
+      height: 80px;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+      color: white;
+    }
+
+    .submit-btn {
+      background: #007bff;
+      width: 100%;
+      margin-top: 20px;
+      height: 50px;
+    }
+
+    .edit-btn {
+      background: green;
+    }
+
+    .delete-btn {
+      background: red;
+      margin-top: 5px;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .table-container {
+      overflow: auto;
+      margin-top: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 2500px;
+    }
+
+    table th {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Jawan Bhavan Room Booking Management</h2>
+
+    <form id="bookingForm">
+      <input type="hidden" id="edit_id" />
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Application No</label>
+          <input type="text" id="application_no" required />
+        </div>
+
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="date" required />
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+
+          <select id="Category" required />
+          <option value="">Select Category</option>
+          <option>Serving</option>
+          <option>Retired</option>
+          <!-- <option>Others</option> -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Service</label>
+
+          <select id="service" required />
+          <option value="">Select Service</option>
+
+          <option value="1">Army</option>
+          <option value="2">Navy</option>
+          <option value="3">Air Force</option>
+          <option value="4">Others</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Rank Category</label>
+
+          <select id="rank_Category" required />
+          <option value="">Select Rank Category</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Rank</label>
+
+          <select id="rank" required />
+          <option value="">Select Rank</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Service No</label>
+          <input type="text" id="service_no" required />
+        </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Mobile</label>
+           <input
+    type="text"
+    id="mobile"
+    maxlength="10"
+    inputmode="numeric"
+    pattern="[6-9]{1}[0-9]{9}"
+    required
+/>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" required />
+        </div>
+
+        <div class="form-group">
+          <label>Country</label>
+
+          <select id="country">
+            <option value="">Select Country</option>
+            <option value="India">India</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>State</label>
+
+          <select id="state">
+            <option value="">Select State</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>District</label>
+
+          <select id="district">
+            <option value="">Select District</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Address1</label>
+          <textarea id="address1" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Address2</label>
+          <textarea id="address2"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Pincode</label>
+          <input
+    type="text"
+    id="pincode"
+    maxlength="6"
+    inputmode="numeric"
+    pattern="[0-9]{6}"
+    required
+/>
+        </div>
+
+        <div class="form-group">
+          <label>Adult</label>
+          <input type="number" id="adult" required />
+        </div>
+
+        <div class="form-group">
+          <label>Children</label>
+          <input type="number" id="children" required />
+        </div>
+
+        <div class="form-group">
+          <label>Checkin Date</label>
+          <input type="date" id="checkin_date" required />
+        </div>
+
+        <div class="form-group">
+          <label>Checkin Time</label>
+
+          <select id="checkin_time">
+            <option>00</option>
+            <option>01</option>
+            <option>02</option>
+            <option>03</option>
+            <option>04</option>
+            <option>05</option>
+            <option>06</option>
+            <option>07</option>
+            <option>08</option>
+            <option>09</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
+            <option>21</option>
+            <option>22</option>
+            <option>23</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Checkout Date</label>
+          <input type="date" id="checkout_date" required />
+        </div>
+
+        <div class="form-group">
+          <label>Checkout Time</label>
+
+          <select id="checkout_time">
+            <option>00</option>
+            <option>01</option>
+            <option>02</option>
+            <option>03</option>
+            <option>04</option>
+            <option>05</option>
+            <option>06</option>
+            <option>07</option>
+            <option>08</option>
+            <option>09</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
+            <option>21</option>
+            <option>22</option>
+            <option>23</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Total Days</label>
+          <input type="number" id="total_days" required />
+        </div>
+
+        <div class="form-group">
+          <label>Rooms Allotted</label>
+          <input type="text" id="rooms_allotted" required />
+        </div>
+
+        <div class="form-group">
+          <label>Total Rooms</label>
+          <input type="number" id="total_rooms" required />
+        </div>
+
+        <div class="form-group">
+          <label>Tariff</label>
+          <input type="number" id="tariff" required />
+        </div>
+
+        <div class="form-group">
+          <label>Rental Charges</label>
+          <input type="number" id="rental_charges" required />
+        </div>
+
+        <div class="form-group">
+          <label>Advance Paid</label>
+          <input type="number" id="advance_paid" required />
+        </div>
+
+        <div class="form-group">
+          <label>Advance Txn</label>
+          <input type="text" id="advance_txn" required />
+        </div>
+
+        <div class="form-group">
+          <label>Advance Date</label>
+          <input type="date" id="advance_date" required />
+        </div>
+
+        <div class="form-group">
+          <label>Balance Paid</label>
+          <input type="number" id="balance_paid" required />
+        </div>
+
+        <div class="form-group">
+          <label>Balance Txn</label>
+          <input type="text" id="balance_txn" required />
+        </div>
+
+        <div class="form-group">
+          <label>Balance Date</label>
+          <input type="date" id="balance_date" required />
+        </div>
+
+        <div class="form-group">
+          <label>Total Paid</label>
+          <input type="number" id="total_paid" required />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Save Booking</button>
+
+      <div id="msg"></div>
+    </form>
+
+    <div class="table-container">
+      <table id="bookingTable">
+        <thead>
+          <tr>
+            <!-- <th>Action</th> -->
+
+            <th>Application No</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Service</th>
+            <th>Rank Category</th>
+            <th>Rank</th>
+            <th>Service No</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Email</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>District</th>
+            <th>Address1</th>
+            <th>Address2</th>
+            <th>Pincode</th>
+            <th>Adult</th>
+            <th>Children</th>
+            <th>Checkin Date</th>
+            <th>Checkin Time</th>
+            <th>Checkout Date</th>
+            <th>Checkout Time</th>
+            <th>Total Days</th>
+            <th>Rooms Allotted</th>
+            <th>Total Rooms</th>
+            <th>Tariff</th>
+            <th>Rental Charges</th>
+            <th>Advance Paid</th>
+            <th>Advance Txn</th>
+            <th>Advance Date</th>
+            <th>Balance Paid</th>
+            <th>Balance Txn</th>
+            <th>Balance Date</th>
+            <th>Total Paid</th>
+          </tr>
+        </thead>
+
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4rV-LIcs-fGxWtePAk4HuC1766RGE7ZaLwJjtTRN0e2m6mR1Al5OISaMK_O00lKTO/exec";
+/* ===========================================
+LOAD GOOGLE SHEET DATA
+=========================================== */
+
+async function loadData() {
+
+    try {
+
+        const response = await fetch(SCRIPT_URL);
+
+        const data = await response.json();
+
+        let table = "";
+
+        data.forEach(row => {
+
+            table += `
+            <tr>
+                <td>${row["Application No"] || ""}</td>
+                <td>${row.Date || ""}</td>
+                <td>${row.Category || ""}</td>
+                <td>${row.Service || ""}</td>
+                <td>${row["Rank Category"] || ""}</td>
+                <td>${row.Rank || ""}</td>
+                <td>${row["Service No"] || ""}</td>
+                <td>${row.Name || ""}</td>
+                <td>${row.Mobile || ""}</td>
+                <td>${row.Email || ""}</td>
+                <td>${row.Country || ""}</td>
+                <td>${row.State || ""}</td>
+                <td>${row.District || ""}</td>
+                <td>${row.Address1 || ""}</td>
+                <td>${row.Address2 || ""}</td>
+                <td>${row.Pincode || ""}</td>
+                <td>${row.Adult || ""}</td>
+                <td>${row.Children || ""}</td>
+                <td>${row["Checkin Date"] || ""}</td>
+                <td>${row["Checkin Time"] || ""}</td>
+                <td>${row["Checkout Date"] || ""}</td>
+                <td>${row["Checkout Time"] || ""}</td>
+                <td>${row["Total Days"] || ""}</td>
+                <td>${row["Rooms Allotted"] || ""}</td>
+                <td>${row["Total Rooms"] || ""}</td>
+                <td>${row.Tariff || ""}</td>
+                <td>${row["Rental Charges"] || ""}</td>
+                <td>${row["Advance Paid"] || ""}</td>
+                <td>${row["Advance Txn"] || ""}</td>
+                <td>${row["Advance Date"] || ""}</td>
+                <td>${row["Balance Paid"] || ""}</td>
+                <td>${row["Balance Txn"] || ""}</td>
+                <td>${row["Balance Date"] || ""}</td>
+                <td>${row["Total Paid"] || ""}</td>
+            </tr>`;
+        });
+
+        document.querySelector("#bookingTable tbody").innerHTML = table;
+
+    } catch (error) {
+
+        console.error("Load Error:", error);
+
+    }
+}
+
+/* ===========================================
+SAVE FORM DATA
+=========================================== */
+
+document.getElementById("bookingForm")
+.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const formData = {
+
+        application_no: document.getElementById("application_no").value,
+        date: document.getElementById("date").value,
+        Category: document.getElementById("Category").value,
+
+        service: document.getElementById("service").selectedOptions[0].text,
+
+        rank_Category: document.getElementById("rank_Category").selectedOptions[0].text,
+
+        rank: document.getElementById("rank").value,
+        service_no: document.getElementById("service_no").value,
+        name: document.getElementById("name").value,
+        mobile: document.getElementById("mobile").value,
+        email: document.getElementById("email").value,
+        country: document.getElementById("country").value,
+        state: document.getElementById("state").value,
+        district: document.getElementById("district").value,
+        address1: document.getElementById("address1").value,
+        address2: document.getElementById("address2").value,
+        pincode: document.getElementById("pincode").value,
+        adult: document.getElementById("adult").value,
+        children: document.getElementById("children").value,
+        checkin_date: document.getElementById("checkin_date").value,
+        checkin_time: document.getElementById("checkin_time").value,
+        checkout_date: document.getElementById("checkout_date").value,
+        checkout_time: document.getElementById("checkout_time").value,
+        total_days: document.getElementById("total_days").value,
+        rooms_allotted: document.getElementById("rooms_allotted").value,
+        total_rooms: document.getElementById("total_rooms").value,
+        tariff: document.getElementById("tariff").value,
+        rental_charges: document.getElementById("rental_charges").value,
+        advance_paid: document.getElementById("advance_paid").value,
+        advance_txn: document.getElementById("advance_txn").value,
+        advance_date: document.getElementById("advance_date").value,
+        balance_paid: document.getElementById("balance_paid").value,
+        balance_txn: document.getElementById("balance_txn").value,
+        balance_date: document.getElementById("balance_date").value,
+        total_paid: document.getElementById("total_paid").value
+    };
+
+    try {
+
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        const msg = document.getElementById("msg");
+
+        msg.innerHTML = result.message;
+        msg.style.color = result.status === "success" ? "green" : "red";
+
+        if (result.status === "success") {
+
+            document.getElementById("bookingForm").reset();
+
+            loadData();
+        }
+
+    } catch (error) {
+
+        console.error("Save Error:", error);
+
+        document.getElementById("msg").innerHTML =
+            "Error saving data";
+
+        document.getElementById("msg").style.color = "red";
+    }
+
+});
+
+/* ===========================================
+INITIAL TABLE LOAD
+=========================================== */
+
+window.addEventListener("load", loadData);
+
+    /* ===========================================
+STATE DATA
+=========================================== */
+
+    const statesData = {
+
+      India: [
+
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+
+        "Andaman and Nicobar Islands",
+        "Chandigarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Jammu and Kashmir",
+        "Ladakh",
+        "Lakshadweep",
+        "Puducherry"
+
+      ]
+
+    };
+
+    /* ===========================================
+    ALL DISTRICTS
+    =========================================== */
+
+    const districtData = {
+
+      "Andhra Pradesh": [
+        "Anakapalli",
+        "Anantapur",
+        "Annamayya",
+        "Bapatla",
+        "Chittoor",
+        "East Godavari",
+        "Eluru",
+        "Guntur",
+        "Kakinada",
+        "Konaseema",
+        "Krishna",
+        "Kurnool",
+        "Nandyal",
+        "Nellore",
+        "NTR",
+        "Palnadu",
+        "Parvathipuram Manyam",
+        "Prakasam",
+        "Srikakulam",
+        "Sri Sathya Sai",
+        "Tirupati",
+        "Visakhapatnam",
+        "Vizianagaram",
+        "West Godavari",
+        "YSR Kadapa"
+      ],
+
+      "Arunachal Pradesh": [
+        "Anjaw",
+        "Changlang",
+        "Dibang Valley",
+        "East Kameng",
+        "East Siang",
+        "Kamle",
+        "Kra Daadi",
+        "Kurung Kumey",
+        "Lepa Rada",
+        "Lohit",
+        "Longding",
+        "Lower Dibang Valley",
+        "Lower Siang",
+        "Lower Subansiri",
+        "Namsai",
+        "Pakke Kessang",
+        "Papum Pare",
+        "Shi Yomi",
+        "Siang",
+        "Tawang",
+        "Tirap",
+        "Upper Siang",
+        "Upper Subansiri",
+        "West Kameng",
+        "West Siang"
+      ],
+
+      "Assam": [
+        "Baksa",
+        "Barpeta",
+        "Biswanath",
+        "Bongaigaon",
+        "Cachar",
+        "Charaideo",
+        "Chirang",
+        "Darrang",
+        "Dhemaji",
+        "Dhubri",
+        "Dibrugarh",
+        "Dima Hasao",
+        "Goalpara",
+        "Golaghat",
+        "Hailakandi",
+        "Hojai",
+        "Jorhat",
+        "Kamrup",
+        "Kamrup Metropolitan",
+        "Karbi Anglong",
+        "Karimganj",
+        "Kokrajhar",
+        "Lakhimpur",
+        "Majuli",
+        "Morigaon",
+        "Nagaon",
+        "Nalbari",
+        "Sivasagar",
+        "Sonitpur",
+        "South Salmara",
+        "Tinsukia",
+        "Udalguri",
+        "West Karbi Anglong"
+      ],
+
+      "Bihar": [
+        "Araria",
+        "Arwal",
+        "Aurangabad",
+        "Banka",
+        "Begusarai",
+        "Bhagalpur",
+        "Bhojpur",
+        "Buxar",
+        "Darbhanga",
+        "East Champaran",
+        "Gaya",
+        "Gopalganj",
+        "Jamui",
+        "Jehanabad",
+        "Kaimur",
+        "Katihar",
+        "Khagaria",
+        "Kishanganj",
+        "Lakhisarai",
+        "Madhepura",
+        "Madhubani",
+        "Munger",
+        "Muzaffarpur",
+        "Nalanda",
+        "Nawada",
+        "Patna",
+        "Purnia",
+        "Rohtas",
+        "Saharsa",
+        "Samastipur",
+        "Saran",
+        "Sheikhpura",
+        "Sheohar",
+        "Sitamarhi",
+        "Siwan",
+        "Supaul",
+        "Vaishali",
+        "West Champaran"
+      ],
+
+      "Chhattisgarh": [
+        "Balod",
+        "Baloda Bazar",
+        "Balrampur",
+        "Bastar",
+        "Bemetara",
+        "Bijapur",
+        "Bilaspur",
+        "Dantewada",
+        "Dhamtari",
+        "Durg",
+        "Gariaband",
+        "Gaurela Pendra Marwahi",
+        "Janjgir Champa",
+        "Jashpur",
+        "Kabirdham",
+        "Kanker",
+        "Kondagaon",
+        "Korba",
+        "Korea",
+        "Mahasamund",
+        "Mungeli",
+        "Narayanpur",
+        "Raigarh",
+        "Raipur",
+        "Rajnandgaon",
+        "Sukma",
+        "Surajpur",
+        "Surguja"
+      ],
+
+      "Goa": [
+        "North Goa",
+        "South Goa"
+      ],
+
+      "Gujarat": [
+        "Ahmedabad",
+        "Amreli",
+        "Anand",
+        "Aravalli",
+        "Banaskantha",
+        "Bharuch",
+        "Bhavnagar",
+        "Botad",
+        "Chhota Udaipur",
+        "Dahod",
+        "Dang",
+        "Devbhoomi Dwarka",
+        "Gandhinagar",
+        "Gir Somnath",
+        "Jamnagar",
+        "Junagadh",
+        "Kheda",
+        "Kutch",
+        "Mahisagar",
+        "Mehsana",
+        "Morbi",
+        "Narmada",
+        "Navsari",
+        "Panchmahal",
+        "Patan",
+        "Porbandar",
+        "Rajkot",
+        "Sabarkantha",
+        "Surat",
+        "Surendranagar",
+        "Tapi",
+        "Vadodara",
+        "Valsad"
+      ],
+
+      "Haryana": [
+        "Ambala",
+        "Bhiwani",
+        "Charkhi Dadri",
+        "Faridabad",
+        "Fatehabad",
+        "Gurugram",
+        "Hisar",
+        "Jhajjar",
+        "Jind",
+        "Kaithal",
+        "Karnal",
+        "Kurukshetra",
+        "Mahendragarh",
+        "Nuh",
+        "Palwal",
+        "Panchkula",
+        "Panipat",
+        "Rewari",
+        "Rohtak",
+        "Sirsa",
+        "Sonipat",
+        "Yamunanagar"
+      ],
+
+      "Himachal Pradesh": [
+        "Bilaspur",
+        "Chamba",
+        "Hamirpur",
+        "Kangra",
+        "Kinnaur",
+        "Kullu",
+        "Lahaul and Spiti",
+        "Mandi",
+        "Shimla",
+        "Sirmaur",
+        "Solan",
+        "Una"
+      ],
+
+      "Jharkhand": [
+        "Bokaro",
+        "Chatra",
+        "Deoghar",
+        "Dhanbad",
+        "Dumka",
+        "East Singhbhum",
+        "Garhwa",
+        "Giridih",
+        "Godda",
+        "Gumla",
+        "Hazaribagh",
+        "Jamtara",
+        "Khunti",
+        "Koderma",
+        "Latehar",
+        "Lohardaga",
+        "Pakur",
+        "Palamu",
+        "Ramgarh",
+        "Ranchi",
+        "Sahibganj",
+        "Seraikela Kharsawan",
+        "Simdega",
+        "West Singhbhum"
+      ],
+
+      "Karnataka": [
+        "Bagalkot",
+        "Bangalore Rural",
+        "Bangalore Urban",
+        "Belagavi",
+        "Ballari",
+        "Bidar",
+        "Chamarajanagar",
+        "Chikkaballapur",
+        "Chikkamagaluru",
+        "Chitradurga",
+        "Dakshina Kannada",
+        "Davanagere",
+        "Dharwad",
+        "Gadag",
+        "Hassan",
+        "Haveri",
+        "Kalaburagi",
+        "Kodagu",
+        "Kolar",
+        "Koppal",
+        "Mandya",
+        "Mysore",
+        "Raichur",
+        "Ramanagara",
+        "Shivamogga",
+        "Tumakuru",
+        "Udupi",
+        "Uttara Kannada",
+        "Vijayapura",
+        "Yadgir"
+      ],
+
+      "Kerala": [
+        "Alappuzha",
+        "Ernakulam",
+        "Idukki",
+        "Kannur",
+        "Kasaragod",
+        "Kollam",
+        "Kottayam",
+        "Kozhikode",
+        "Malappuram",
+        "Palakkad",
+        "Pathanamthitta",
+        "Thiruvananthapuram",
+        "Thrissur",
+        "Wayanad"
+      ],
+
+      "Tamil Nadu": [
+        "Ariyalur",
+        "Chengalpattu",
+        "Chennai",
+        "Coimbatore",
+        "Cuddalore",
+        "Dharmapuri",
+        "Dindigul",
+        "Erode",
+        "Kallakurichi",
+        "Kancheepuram",
+        "Kanniyakumari",
+        "Karur",
+        "Krishnagiri",
+        "Madurai",
+        "Mayiladuthurai",
+        "Nagapattinam",
+        "Namakkal",
+        "Nilgiris",
+        "Perambalur",
+        "Pudukkottai",
+        "Ramanathapuram",
+        "Ranipet",
+        "Salem",
+        "Sivaganga",
+        "Tenkasi",
+        "Thanjavur",
+        "Theni",
+        "Thoothukudi",
+        "Tiruchirappalli",
+        "Tirunelveli",
+        "Tirupathur",
+        "Tiruppur",
+        "Tiruvallur",
+        "Tiruvannamalai",
+        "Tiruvarur",
+        "Vellore",
+        "Viluppuram",
+        "Virudhunagar"
+      ],
+
+      "Telangana": [
+        "Adilabad",
+        "Bhadradri Kothagudem",
+        "Hyderabad",
+        "Jagtial",
+        "Jangaon",
+        "Jayashankar Bhupalpally",
+        "Jogulamba Gadwal",
+        "Kamareddy",
+        "Karimnagar",
+        "Khammam",
+        "Komaram Bheem",
+        "Mahabubabad",
+        "Mahabubnagar",
+        "Mancherial",
+        "Medak",
+        "Medchal",
+        "Mulugu",
+        "Nagarkurnool",
+        "Nalgonda",
+        "Narayanpet",
+        "Nirmal",
+        "Nizamabad",
+        "Peddapalli",
+        "Rajanna Sircilla",
+        "Rangareddy",
+        "Sangareddy",
+        "Siddipet",
+        "Suryapet",
+        "Vikarabad",
+        "Wanaparthy",
+        "Warangal",
+        "Yadadri Bhuvanagiri"
+      ],
+
+      "Andaman and Nicobar Islands": [
+        "Nicobar",
+        "North and Middle Andaman",
+        "South Andaman"
+      ],
+
+      "Chandigarh": [
+        "Chandigarh"
+      ],
+
+      "Dadra and Nagar Haveli and Daman and Diu": [
+        "Dadra and Nagar Haveli",
+        "Daman",
+        "Diu"
+      ],
+
+      "Delhi": [
+        "Central Delhi",
+        "East Delhi",
+        "New Delhi",
+        "North Delhi",
+        "North East Delhi",
+        "North West Delhi",
+        "Shahdara",
+        "South Delhi",
+        "South East Delhi",
+        "South West Delhi",
+        "West Delhi"
+      ],
+
+      "Jammu and Kashmir": [
+        "Anantnag",
+        "Bandipora",
+        "Baramulla",
+        "Budgam",
+        "Doda",
+        "Ganderbal",
+        "Jammu",
+        "Kathua",
+        "Kishtwar",
+        "Kulgam",
+        "Kupwara",
+        "Poonch",
+        "Pulwama",
+        "Rajouri",
+        "Ramban",
+        "Reasi",
+        "Samba",
+        "Shopian",
+        "Srinagar",
+        "Udhampur"
+      ],
+
+      "Ladakh": [
+        "Kargil",
+        "Leh"
+      ],
+
+      "Lakshadweep": [
+        "Lakshadweep"
+      ],
+
+      "Puducherry": [
+        "Karaikal",
+        "Mahe",
+        "Pondicherry",
+        "Yanam"
+      ]
+
+    };
+
+    /* ===========================================
+    COUNTRY -> STATE DROPDOWN
+    =========================================== */
+
+    document.getElementById("country")
+      .addEventListener("change", function () {
+
+        let country = this.value;
+
+        let stateDropdown =
+          document.getElementById("state");
+
+        stateDropdown.innerHTML =
+          '<option value="">Select State</option>';
+
+        document.getElementById("district").innerHTML =
+          '<option value="">Select District</option>';
+
+        if (statesData[country]) {
+
+          statesData[country].forEach(function (state) {
+
+            stateDropdown.innerHTML +=
+              `<option value="${state}">
+${state}
+</option>`;
+
+          });
+
+        }
+
+      });
+
+    /* ===========================================
+    STATE -> DISTRICT DROPDOWN
+    =========================================== */
+
+    document.getElementById("state")
+      .addEventListener("change", function () {
+
+        let state = this.value;
+
+        let districtDropdown =
+          document.getElementById("district");
+
+        districtDropdown.innerHTML =
+          '<option value="">Select District</option>';
+
+        if (districtData[state]) {
+
+          districtData[state].forEach(function (district) {
+
+            districtDropdown.innerHTML +=
+              `<option value="${district}">
+${district}
+</option>`;
+
+          });
+
+        }
+
+      });
+    /* ===========================================
+    COUNTRY CHANGE
+    =========================================== */
+
+    document
+      .getElementById("country")
+      .addEventListener("change", function () {
+        let country = this.value;
+
+        let stateDropdown = document.getElementById("state");
+
+        stateDropdown.innerHTML = '<option value="">Select State</option>';
+
+        if (statesData[country]) {
+          statesData[country].forEach(function (state) {
+            stateDropdown.innerHTML += `<option value="${state}">
+${state}
+</option>`;
+          });
+        }
+      });
+
+    /* ===========================================
+STATE CHANGE
+=========================================== */
+
+    document.getElementById("state").addEventListener("change", function () {
+      let state = this.value;
+
+      let districtDropdown = document.getElementById("district");
+
+      districtDropdown.innerHTML =
+        '<option value="">Select District</option>';
+
+      if (districtData[state]) {
+        districtData[state].forEach(function (district) {
+          districtDropdown.innerHTML += `<option value="${district}">
+${district}
+</option>`;
+        });
+      }
+    });
+    /* ===========================================
+    RANK Category DATA
+    =========================================== */
+
+    const rankCategories = {
+
+1:[
+{id:1,name:"OR"},
+{id:2,name:"JCO"},
+{id:3,name:"Honoury"},
+{id:4,name:"Officer"}
+],
+
+2:[
+{id:1,name:"OR"},
+{id:2,name:"JCO"},
+{id:3,name:"Honoury"},
+{id:4,name:"Officer"}
+],
+
+3:[
+{id:1,name:"OR"},
+{id:2,name:"JCO"},
+{id:3,name:"Honoury"},
+{id:4,name:"Officer"}
+],
+
+4:[
+{id:5,name:"Others"}
+]
+
+};
+
+
+/* ===========================================
+FULL RANK DATA
+=========================================== */
+const ranks = [
+
+/* ================= ARMY ================= */
+
+{service:1, category:1, name:"Sepoy"},
+{service:1, category:1, name:"Lance Naik"},
+{service:1, category:1, name:"Naik"},
+{service:1, category:1, name:"Havildar"},
+
+{service:1, category:2, name:"Naib Subedar"},
+{service:1, category:2, name:"Subedar"},
+{service:1, category:2, name:"Subedar Major"},
+
+{service:1, category:3, name:"Honorary Lieutenant"},
+{service:1, category:3, name:"Honorary Captain"},
+
+{service:1, category:4, name:"Lieutenant (IA)"},
+{service:1, category:4, name:"Captain (IA)"},
+{service:1, category:4, name:"Major"},
+{service:1, category:4, name:"Lt.Colonel"},
+{service:1, category:4, name:"Colonel"},
+{service:1, category:4, name:"Brigadier"},
+{service:1, category:4, name:"Major General"},
+{service:1, category:4, name:"Lt.General"},
+{service:1, category:4, name:"General"},
+{service:1, category:4, name:"Field Marshal"},
+
+/* ================= NAVY ================= */
+
+{service:2, category:1, name:"Seaman II"},
+{service:2, category:1, name:"Seaman I"},
+{service:2, category:1, name:"Leading Seaman"},
+{service:2, category:1, name:"Petty Officer"},
+
+{service:2, category:2, name:"Chief Petty Officer"},
+{service:2, category:2, name:"Master Chief Petty Officer 2nd"},
+{service:2, category:2, name:"Master Chief Petty Officer 1st"},
+
+{service:2, category:3, name:"Honorary Sub Lieutenant"},
+{service:2, category:3, name:"Honorary Lieutenant"},
+
+{service:2, category:4, name:"Sub Lieutenant"},
+{service:2, category:4, name:"Lieutenant (IN)"},
+{service:2, category:4, name:"Lt.Commander"},
+{service:2, category:4, name:"Commander"},
+{service:2, category:4, name:"Captain (IN)"},
+{service:2, category:4, name:"Commodore"},
+{service:2, category:4, name:"Rear Admiral"},
+{service:2, category:4, name:"Vice Admiral"},
+{service:2, category:4, name:"Admiral"},
+{service:2, category:4, name:"Admiral of the Fleet"},
+
+/* ================= AIR FORCE ================= */
+
+{service:3, category:1, name:"Aircraftsman"},
+{service:3, category:1, name:"Leading Aircraftsman"},
+{service:3, category:1, name:"Corporal"},
+{service:3, category:1, name:"Sergeant"},
+
+{service:3, category:2, name:"Junior Warrant Officer"},
+{service:3, category:2, name:"Warrant Officer"},
+{service:3, category:2, name:"Master Warrant Officer"},
+
+{service:3, category:3, name:"Honorary Flying Officer"},
+{service:3, category:3, name:"Honorary Flight Lieutenant"},
+
+{service:3, category:4, name:"Flying Officer"},
+{service:3, category:4, name:"Flight Lieutenant"},
+{service:3, category:4, name:"Squadron Leader"},
+{service:3, category:4, name:"Wing Commander"},
+{service:3, category:4, name:"Group Captain"},
+{service:3, category:4, name:"Air Commodore"},
+{service:3, category:4, name:"Air Vice Marshal"},
+{service:3, category:4, name:"Air Marshal"},
+{service:3, category:4, name:"Air Chief Marshal"},
+{service:3, category:4, name:"Marshal of the Air Force"},
+
+/* ================= OTHERS ================= */
+
+{service:4, category:5, name:"Others"}
+
+];
+
+    /* ===========================================
+    SERVICE CHANGE
+    =========================================== */
+
+    document.getElementById("service")
+      .addEventListener("change", function () {
+
+        let serviceId = parseInt(this.value);
+
+        let rankCategory =
+          document.getElementById("rank_Category");
+
+        let rankDropdown =
+          document.getElementById("rank");
+
+        rankCategory.innerHTML =
+          '<option value="">Select Rank Category</option>';
+
+        rankDropdown.innerHTML =
+          '<option value="">Select Rank</option>';
+
+        if (rankCategories[serviceId]) {
+
+          rankCategories[serviceId]
+            .forEach(function (item) {
+
+              rankCategory.innerHTML +=
+                `<option value="${item.id}">
+${item.name}
+</option>`;
+
+            });
+
+        }
+
+      });
+
+    /* ===========================================
+    RANK Category CHANGE
+    =========================================== */
+document.getElementById("rank_Category")
+  .addEventListener("change", function () {
+
+    const serviceId = parseInt(
+      document.getElementById("service").value
+    );
+
+    const categoryId = parseInt(this.value);
+
+    const rankDropdown = document.getElementById("rank");
+
+    rankDropdown.innerHTML =
+      '<option value="">Select Rank</option>';
+
+    const filteredRanks = ranks.filter(item =>
+      item.service === serviceId &&
+      item.category === categoryId
+    );
+
+    filteredRanks.forEach(item => {
+
+      rankDropdown.innerHTML += `
+        <option value="${item.name}">
+          ${item.name}
+        </option>`;
+    });
+
+  });
+
+    /* ===========================================
+    SAVE DATA
+    =========================================== */
+
+    document
+      .getElementById("bookingForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let formData = {
+          id: document.getElementById("edit_id").value,
+
+          application_no: document.getElementById("application_no").value,
+
+          date: document.getElementById("date").value,
+
+          Category: document.getElementById("Category").value,
+
+          service:
+            document.getElementById("service").options[
+              document.getElementById("service").selectedIndex
+            ].text,
+
+          rank_Category:
+            document.getElementById("rank_Category").options[
+              document.getElementById("rank_Category").selectedIndex
+            ].text,
+
+          rank: document.getElementById("rank").value,
+
+          service_no: document.getElementById("service_no").value,
+
+          name: document.getElementById("name").value,
+
+          mobile: document.getElementById("mobile").value,
+
+          email: document.getElementById("email").value,
+
+          country: document.getElementById("country").value,
+
+          state: document.getElementById("state").value,
+
+          district: document.getElementById("district").value,
+
+          address1: document.getElementById("address1").value,
+
+          address2: document.getElementById("address2").value,
+
+          pincode: document.getElementById("pincode").value,
+
+          adult: document.getElementById("adult").value,
+
+          children: document.getElementById("children").value,
+
+          checkin_date: document.getElementById("checkin_date").value,
+
+          checkin_time: document.getElementById("checkin_time").value,
+
+          checkout_date: document.getElementById("checkout_date").value,
+
+          checkout_time: document.getElementById("checkout_time").value,
+
+          total_days: document.getElementById("total_days").value,
+
+          rooms_allotted: document.getElementById("rooms_allotted").value,
+
+          total_rooms: document.getElementById("total_rooms").value,
+
+          tariff: document.getElementById("tariff").value,
+
+          rental_charges: document.getElementById("rental_charges").value,
+
+          advance_paid: document.getElementById("advance_paid").value,
+
+          advance_txn: document.getElementById("advance_txn").value,
+
+          advance_date: document.getElementById("advance_date").value,
+
+          balance_paid: document.getElementById("balance_paid").value,
+
+          balance_txn: document.getElementById("balance_txn").value,
+
+          balance_date: document.getElementById("balance_date").value,
+
+          total_paid: document.getElementById("total_paid").value,
+        };
+
+        // fetch("save.php", {
+        //   method: "POST",
+
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+
+        //   body: JSON.stringify(formData),
+        // })
+          // .then((response) => response.text())
+
+          // .then((data) => {
+          //   document.getElementById("msg").innerHTML = data;
+
+          //   document.getElementById("bookingForm").reset();
+
+          //   document.getElementById("edit_id").value = "";
+
+          //   loadData();
+          // });
+      });
+
+    /* ===========================================
+LOAD TABLE DATA
+=========================================== */
+
+//     function loadData() {
+//       fetch("fetch.php")
+//         .then((response) => response.json())
+
+//         .then((data) => {
+//           let table = "";
+
+//           data.forEach(function (row) {
+//             table += `
+
+// <tr>
+
+// <td>
+
+// <button class="edit-btn"
+// onclick="editData(${row.id})">
+
+// Edit
+
+// </button>
+
+// <br><br>
+
+// <button class="delete-btn"
+// onclick="deleteData(${row.id})">
+
+// Delete
+
+// </button>
+
+// </td>
+
+// <td>${row.id}</td>
+// <td>${row.application_no}</td>
+// <td>${row.date}</td>
+// <td>${row.Category}</td>
+// <td>${row.service}</td>
+// <td>${row.rank_Category}</td>
+// <td>${row.rank_name}</td>
+// <td>${row.service_no}</td>
+// <td>${row.name}</td>
+// <td>${row.mobile}</td>
+// <td>${row.email}</td>
+// <td>${row.country}</td>
+// <td>${row.state}</td>
+// <td>${row.district}</td>
+// <td>${row.address1}</td>
+// <td>${row.address2}</td>
+// <td>${row.pincode}</td>
+// <td>${row.adult}</td>
+// <td>${row.children}</td>
+// <td>${row.checkin_date}</td>
+// <td>${row.checkin_time}</td>
+// <td>${row.checkout_date}</td>
+// <td>${row.checkout_time}</td>
+// <td>${row.total_days}</td>
+// <td>${row.rooms_allotted}</td>
+// <td>${row.total_rooms}</td>
+// <td>${row.tariff}</td>
+// <td>${row.rental_charges}</td>
+// <td>${row.advance_paid}</td>
+// <td>${row.advance_txn}</td>
+// <td>${row.advance_date}</td>
+// <td>${row.balance_paid}</td>
+// <td>${row.balance_txn}</td>
+// <td>${row.balance_date}</td>
+// <td>${row.total_paid}</td>
+
+// </tr>
+
+// `;
+//           });
+
+//           document.querySelector("#bookingTable tbody").innerHTML = table;
+//         });
+//     }
+
+
+  </script>
+</body>
+
+</html>
