@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 
@@ -331,19 +332,15 @@
           <input type="number" id="total_days" required />
         </div>
 
-        <div class="form-group">
-          <label>Rooms Allotted</label>
-
-          <select id="rooms_allotted" required>
-            <option value="">Select Room</option>
-            <option value="SU-1">SU-1</option>
-            <option value="SU-2">SU-2</option>
-            <option value="Fr-21">Fr-21</option>
-            <option value="Fr-22">Fr-22</option>
-            <option value="Fr-23">Fr-23</option>
-            <option value="Fr-24">Fr-24</option>
-          </select>
-        </div>
+        <select id="rooms_allotted" required>
+  <option value="">Select Room</option>
+  <option value="SU-1">SU-1</option>
+  <option value="SU-2">SU-2</option>
+  <option value="FR-21">FR-21</option>
+  <option value="FR-22">FR-22</option>
+  <option value="FR-23">FR-23</option>
+  <option value="FR-24">FR-24</option>
+</select>
 
         <div class="form-group">
           <label>Total Rooms</label>
@@ -351,17 +348,9 @@
         </div>
 
         <div class="form-group">
-          <label>Tariff</label>
-          <select id="tariff" required>
-            <option value="">Select Tariff</option>
-            <option value="500" data-amount="500">500</option>
-            <option value="700" data-amount="700">700</option>
-            <option value="600" data-amount="600">600</option>
-            <option value="900" data-amount="900">900</option>
-          </select>
-
-        </div>
-
+  <label>Tariff</label>
+  <input type="number" id="tariff" readonly />
+</div>
         <div class="form-group">
           <label>Rental Charges</label>
           <input type="number" id="rental_charges" required />
@@ -457,6 +446,36 @@
   </div>
 
   <script>
+    function updateTariff() {
+
+  const category = document.getElementById("Category").value;
+  const room = document.getElementById("rooms_allotted").value;
+
+  let tariff = 0;
+
+  const suiteRooms = ["SU-1", "SU-2"];
+  const familyRooms = ["FR-21", "FR-22", "FR-23", "FR-24"];
+
+  if (suiteRooms.includes(room)) {
+
+    tariff = category === "Serving" ? 900 : 600;
+
+  } else if (familyRooms.includes(room)) {
+
+    tariff = category === "Serving" ? 700 : 500;
+  }
+
+  document.getElementById("tariff").value = tariff;
+
+  calculateCharges();
+}
+document.getElementById("Category")
+  .addEventListener("change", updateTariff);
+
+document.getElementById("rooms_allotted")
+  .addEventListener("change", updateTariff);
+  const tariff =
+  parseFloat(document.getElementById("tariff").value) || 0;
     /* ===========================================
 AUTO CALCULATE PAYMENT DETAILS
 =========================================== */
