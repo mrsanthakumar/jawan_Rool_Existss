@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -197,14 +196,7 @@
 
         <div class="form-group">
           <label>Mobile</label>
-           <input
-    type="text"
-    id="mobile"
-    maxlength="10"
-    inputmode="numeric"
-    pattern="[6-9]{1}[0-9]{9}"
-    required
-/>
+          <input type="text" id="mobile" maxlength="10" inputmode="numeric" pattern="[6-9]{1}[0-9]{9}" required />
         </div>
 
         <div class="form-group">
@@ -249,14 +241,7 @@
 
         <div class="form-group">
           <label>Pincode</label>
-          <input
-    type="text"
-    id="pincode"
-    maxlength="6"
-    inputmode="numeric"
-    pattern="[0-9]{6}"
-    required
-/>
+          <input type="text" id="pincode" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required />
         </div>
 
         <div class="form-group">
@@ -347,17 +332,17 @@
         </div>
 
         <div class="form-group">
-  <label>Rooms Allotted</label>
+          <label>Rooms Allotted</label>
 
-  <select id="rooms_allotted" required>
-    <option value="">Select Room</option>
-    <option value="SU-1">SU-1</option>
-    <option value="SU-2">SU-2</option>
-    <option value="Fr-21">Fr-21</option>
-    <option value="Fr-22">Fr-22</option>
-    <option value="Fr-23">Fr-23</option>
-    <option value="Fr-24">Fr-24</option>
-  </select>
+          <select id="rooms_allotted" required>
+            <option value="">Select Room</option>
+            <option value="SU-1">SU-1</option>
+            <option value="SU-2">SU-2</option>
+            <option value="Fr-21">Fr-21</option>
+            <option value="Fr-22">Fr-22</option>
+            <option value="Fr-23">Fr-23</option>
+            <option value="Fr-24">Fr-24</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -367,14 +352,14 @@
 
         <div class="form-group">
           <label>Tariff</label>
-           <select id="tariff" required>
-    <option value="">Select Tariff</option>
-    <option value="500" data-amount="500">500</option>
-    <option value="700" data-amount="700">700</option>
-    <option value="600" data-amount="600">600</option>
-    <option value="900" data-amount="900">900</option>
-  </select>
-          
+          <select id="tariff" required>
+            <option value="">Select Tariff</option>
+            <option value="500" data-amount="500">500</option>
+            <option value="700" data-amount="700">700</option>
+            <option value="600" data-amount="600">600</option>
+            <option value="900" data-amount="900">900</option>
+          </select>
+
         </div>
 
         <div class="form-group">
@@ -472,14 +457,105 @@
   </div>
 
   <script>
-   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4rV-LIcs-fGxWtePAk4HuC1766RGE7ZaLwJjtTRN0e2m6mR1Al5OISaMK_O00lKTO/exec";
+    /* ===========================================
+AUTO CALCULATE PAYMENT DETAILS
+=========================================== */
 /* ===========================================
-LOAD GOOGLE SHEET DATA
+AUTO CALCULATE CHARGES
+=========================================== */
+/* ===========================================
+AUTO CALCULATE TOTAL DAYS
 =========================================== */
 
-async function loadData() {
+function calculateTotalDays() {
 
-    try {
+  const checkinDate = document.getElementById("checkin_date").value;
+  const checkoutDate = document.getElementById("checkout_date").value;
+  const checkinTime = document.getElementById("checkin_time").value;
+  const checkoutTime = document.getElementById("checkout_time").value;
+
+  if (!checkinDate || !checkoutDate || checkinTime === "" || checkoutTime === "") {
+    document.getElementById("total_days").value = "";
+    return;
+  }
+
+  const start = new Date(`${checkinDate}T${checkinTime.padStart(2, '0')}:00:00`);
+  const end = new Date(`${checkoutDate}T${checkoutTime.padStart(2, '0')}:00:00`);
+
+  if (end < start) {
+    document.getElementById("total_days").value = 0;
+    return;
+  }
+
+  const diffMs = end - start;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  let totalDays = diffDays + 1;
+
+  // If checkout time is earlier than checkin time, don't count the last day
+  if (parseInt(checkoutTime) < parseInt(checkinTime)) {
+    totalDays--;
+  }
+
+  document.getElementById("total_days").value = Math.max(totalDays, 1);
+
+  calculateCharges();
+}
+
+document.getElementById("checkin_date")
+  .addEventListener("change", calculateTotalDays);
+
+document.getElementById("checkout_date")
+  .addEventListener("change", calculateTotalDays);
+
+document.getElementById("checkin_time")
+  .addEventListener("change", calculateTotalDays);
+
+document.getElementById("checkout_time")
+  .addEventListener("change", calculateTotalDays);
+
+
+function calculateCharges() {
+
+  const totalDays = parseFloat(document.getElementById("total_days").value) || 0;
+  const tariff = parseFloat(document.getElementById("tariff").value) || 0;
+  const totalRooms = parseFloat(document.getElementById("total_rooms").value) || 0;
+  const advancePaid = parseFloat(document.getElementById("advance_paid").value) || 0;
+
+  // Rental Charges = Days × Tariff × Rooms
+  const rentalCharges = totalDays * tariff * totalRooms;
+
+  // Balance = Rental Charges - Advance
+  const balancePaid = rentalCharges - advancePaid;
+
+  document.getElementById("rental_charges").value = rentalCharges;
+  document.getElementById("balance_paid").value = balancePaid >= 0 ? balancePaid : 0;
+}
+
+/* Trigger calculation */
+
+document.getElementById("total_days")
+  .addEventListener("input", calculateCharges);
+
+document.getElementById("tariff")
+  .addEventListener("change", calculateCharges);
+
+document.getElementById("total_rooms")
+  .addEventListener("input", calculateCharges);
+
+document.getElementById("advance_paid")
+  .addEventListener("input", calculateCharges);
+
+
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4rV-LIcs-fGxWtePAk4HuC1766RGE7ZaLwJjtTRN0e2m6mR1Al5OISaMK_O00lKTO/exec";
+    /* ===========================================
+    LOAD GOOGLE SHEET DATA
+    =========================================== */
+
+    async function loadData() {
+
+      try {
 
         const response = await fetch(SCRIPT_URL);
 
@@ -489,7 +565,7 @@ async function loadData() {
 
         data.forEach(row => {
 
-            table += `
+          table += `
             <tr>
                 <td>${row["Application No"] || ""}</td>
                 <td>${row.Date || ""}</td>
@@ -530,104 +606,104 @@ async function loadData() {
 
         document.querySelector("#bookingTable tbody").innerHTML = table;
 
-    } catch (error) {
+      } catch (error) {
 
         console.error("Load Error:", error);
 
+      }
     }
-}
 
-/* ===========================================
-SAVE FORM DATA
-=========================================== */
+    /* ===========================================
+    SAVE FORM DATA
+    =========================================== */
 
-document.getElementById("bookingForm")
-.addEventListener("submit", async function(e) {
+    document.getElementById("bookingForm")
+      .addEventListener("submit", async function (e) {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    const formData = {
+        const formData = {
 
-        application_no: document.getElementById("application_no").value,
-        date: document.getElementById("date").value,
-        Category: document.getElementById("Category").value,
+          application_no: document.getElementById("application_no").value,
+          date: document.getElementById("date").value,
+          Category: document.getElementById("Category").value,
 
-        service: document.getElementById("service").selectedOptions[0].text,
+          service: document.getElementById("service").selectedOptions[0].text,
 
-        rank_Category: document.getElementById("rank_Category").selectedOptions[0].text,
+          rank_Category: document.getElementById("rank_Category").selectedOptions[0].text,
 
-        rank: document.getElementById("rank").value,
-        service_no: document.getElementById("service_no").value,
-        name: document.getElementById("name").value,
-        mobile: document.getElementById("mobile").value,
-        email: document.getElementById("email").value,
-        country: document.getElementById("country").value,
-        state: document.getElementById("state").value,
-        district: document.getElementById("district").value,
-        address1: document.getElementById("address1").value,
-        address2: document.getElementById("address2").value,
-        pincode: document.getElementById("pincode").value,
-        adult: document.getElementById("adult").value,
-        children: document.getElementById("children").value,
-        checkin_date: document.getElementById("checkin_date").value,
-        checkin_time: document.getElementById("checkin_time").value,
-        checkout_date: document.getElementById("checkout_date").value,
-        checkout_time: document.getElementById("checkout_time").value,
-        total_days: document.getElementById("total_days").value,
-        rooms_allotted: document.getElementById("rooms_allotted").value,
-        total_rooms: document.getElementById("total_rooms").value,
-        tariff: document.getElementById("tariff").value,
-        rental_charges: document.getElementById("rental_charges").value,
-        advance_paid: document.getElementById("advance_paid").value,
-        advance_txn: document.getElementById("advance_txn").value,
-        advance_date: document.getElementById("advance_date").value,
-        balance_paid: document.getElementById("balance_paid").value,
-        balance_txn: document.getElementById("balance_txn").value,
-        balance_date: document.getElementById("balance_date").value,
-        total_paid: document.getElementById("total_paid").value
-    };
+          rank: document.getElementById("rank").value,
+          service_no: document.getElementById("service_no").value,
+          name: document.getElementById("name").value,
+          mobile: document.getElementById("mobile").value,
+          email: document.getElementById("email").value,
+          country: document.getElementById("country").value,
+          state: document.getElementById("state").value,
+          district: document.getElementById("district").value,
+          address1: document.getElementById("address1").value,
+          address2: document.getElementById("address2").value,
+          pincode: document.getElementById("pincode").value,
+          adult: document.getElementById("adult").value,
+          children: document.getElementById("children").value,
+          checkin_date: document.getElementById("checkin_date").value,
+          checkin_time: document.getElementById("checkin_time").value,
+          checkout_date: document.getElementById("checkout_date").value,
+          checkout_time: document.getElementById("checkout_time").value,
+          total_days: document.getElementById("total_days").value,
+          rooms_allotted: document.getElementById("rooms_allotted").value,
+          total_rooms: document.getElementById("total_rooms").value,
+          tariff: document.getElementById("tariff").value,
+          rental_charges: document.getElementById("rental_charges").value,
+          advance_paid: document.getElementById("advance_paid").value,
+          advance_txn: document.getElementById("advance_txn").value,
+          advance_date: document.getElementById("advance_date").value,
+          balance_paid: document.getElementById("balance_paid").value,
+          balance_txn: document.getElementById("balance_txn").value,
+          balance_date: document.getElementById("balance_date").value,
+          total_paid: document.getElementById("total_paid").value
+        };
 
-    try {
+        try {
 
-        const response = await fetch(SCRIPT_URL, {
+          const response = await fetch(SCRIPT_URL, {
             method: "POST",
             headers: {
-                "Content-Type": "text/plain;charset=utf-8"
+              "Content-Type": "text/plain;charset=utf-8"
             },
             body: JSON.stringify(formData)
-        });
+          });
 
-        const result = await response.json();
+          const result = await response.json();
 
-        const msg = document.getElementById("msg");
+          const msg = document.getElementById("msg");
 
-        msg.innerHTML = result.message;
-        msg.style.color = result.status === "success" ? "green" : "red";
+          msg.innerHTML = result.message;
+          msg.style.color = result.status === "success" ? "green" : "red";
 
-        if (result.status === "success") {
+          if (result.status === "success") {
 
             document.getElementById("bookingForm").reset();
 
             loadData();
-        }
+          }
 
-    } catch (error) {
+        } catch (error) {
 
-        console.error("Save Error:", error);
+          console.error("Save Error:", error);
 
-        document.getElementById("msg").innerHTML =
+          document.getElementById("msg").innerHTML =
             "Error saving data";
 
-        document.getElementById("msg").style.color = "red";
-    }
+          document.getElementById("msg").style.color = "red";
+        }
 
-});
+      });
 
-/* ===========================================
-INITIAL TABLE LOAD
-=========================================== */
+    /* ===========================================
+    INITIAL TABLE LOAD
+    =========================================== */
 
-window.addEventListener("load", loadData);
+    window.addEventListener("load", loadData);
 
     /* ===========================================
 STATE DATA
@@ -1264,119 +1340,119 @@ ${district}
 
     const rankCategories = {
 
-1:[
-{id:1,name:"OR"},
-{id:2,name:"JCO"},
-{id:3,name:"Honoury"},
-{id:4,name:"Officer"}
-],
+      1: [
+        { id: 1, name: "OR" },
+        { id: 2, name: "JCO" },
+        { id: 3, name: "Honoury" },
+        { id: 4, name: "Officer" }
+      ],
 
-2:[
-{id:1,name:"OR"},
-{id:2,name:"JCO"},
-{id:3,name:"Honoury"},
-{id:4,name:"Officer"}
-],
+      2: [
+        { id: 1, name: "OR" },
+        { id: 2, name: "JCO" },
+        { id: 3, name: "Honoury" },
+        { id: 4, name: "Officer" }
+      ],
 
-3:[
-{id:1,name:"OR"},
-{id:2,name:"JCO"},
-{id:3,name:"Honoury"},
-{id:4,name:"Officer"}
-],
+      3: [
+        { id: 1, name: "OR" },
+        { id: 2, name: "JCO" },
+        { id: 3, name: "Honoury" },
+        { id: 4, name: "Officer" }
+      ],
 
-4:[
-{id:5,name:"Others"}
-]
+      4: [
+        { id: 5, name: "Others" }
+      ]
 
-};
+    };
 
 
-/* ===========================================
-FULL RANK DATA
-=========================================== */
-const ranks = [
+    /* ===========================================
+    FULL RANK DATA
+    =========================================== */
+    const ranks = [
 
-/* ================= ARMY ================= */
+      /* ================= ARMY ================= */
 
-{service:1, category:1, name:"Sepoy"},
-{service:1, category:1, name:"Lance Naik"},
-{service:1, category:1, name:"Naik"},
-{service:1, category:1, name:"Havildar"},
+      { service: 1, category: 1, name: "Sepoy" },
+      { service: 1, category: 1, name: "Lance Naik" },
+      { service: 1, category: 1, name: "Naik" },
+      { service: 1, category: 1, name: "Havildar" },
 
-{service:1, category:2, name:"Naib Subedar"},
-{service:1, category:2, name:"Subedar"},
-{service:1, category:2, name:"Subedar Major"},
+      { service: 1, category: 2, name: "Naib Subedar" },
+      { service: 1, category: 2, name: "Subedar" },
+      { service: 1, category: 2, name: "Subedar Major" },
 
-{service:1, category:3, name:"Honorary Lieutenant"},
-{service:1, category:3, name:"Honorary Captain"},
+      { service: 1, category: 3, name: "Honorary Lieutenant" },
+      { service: 1, category: 3, name: "Honorary Captain" },
 
-{service:1, category:4, name:"Lieutenant (IA)"},
-{service:1, category:4, name:"Captain (IA)"},
-{service:1, category:4, name:"Major"},
-{service:1, category:4, name:"Lt.Colonel"},
-{service:1, category:4, name:"Colonel"},
-{service:1, category:4, name:"Brigadier"},
-{service:1, category:4, name:"Major General"},
-{service:1, category:4, name:"Lt.General"},
-{service:1, category:4, name:"General"},
-{service:1, category:4, name:"Field Marshal"},
+      { service: 1, category: 4, name: "Lieutenant (IA)" },
+      { service: 1, category: 4, name: "Captain (IA)" },
+      { service: 1, category: 4, name: "Major" },
+      { service: 1, category: 4, name: "Lt.Colonel" },
+      { service: 1, category: 4, name: "Colonel" },
+      { service: 1, category: 4, name: "Brigadier" },
+      { service: 1, category: 4, name: "Major General" },
+      { service: 1, category: 4, name: "Lt.General" },
+      { service: 1, category: 4, name: "General" },
+      { service: 1, category: 4, name: "Field Marshal" },
 
-/* ================= NAVY ================= */
+      /* ================= NAVY ================= */
 
-{service:2, category:1, name:"Seaman II"},
-{service:2, category:1, name:"Seaman I"},
-{service:2, category:1, name:"Leading Seaman"},
-{service:2, category:1, name:"Petty Officer"},
+      { service: 2, category: 1, name: "Seaman II" },
+      { service: 2, category: 1, name: "Seaman I" },
+      { service: 2, category: 1, name: "Leading Seaman" },
+      { service: 2, category: 1, name: "Petty Officer" },
 
-{service:2, category:2, name:"Chief Petty Officer"},
-{service:2, category:2, name:"Master Chief Petty Officer 2nd"},
-{service:2, category:2, name:"Master Chief Petty Officer 1st"},
+      { service: 2, category: 2, name: "Chief Petty Officer" },
+      { service: 2, category: 2, name: "Master Chief Petty Officer 2nd" },
+      { service: 2, category: 2, name: "Master Chief Petty Officer 1st" },
 
-{service:2, category:3, name:"Honorary Sub Lieutenant"},
-{service:2, category:3, name:"Honorary Lieutenant"},
+      { service: 2, category: 3, name: "Honorary Sub Lieutenant" },
+      { service: 2, category: 3, name: "Honorary Lieutenant" },
 
-{service:2, category:4, name:"Sub Lieutenant"},
-{service:2, category:4, name:"Lieutenant (IN)"},
-{service:2, category:4, name:"Lt.Commander"},
-{service:2, category:4, name:"Commander"},
-{service:2, category:4, name:"Captain (IN)"},
-{service:2, category:4, name:"Commodore"},
-{service:2, category:4, name:"Rear Admiral"},
-{service:2, category:4, name:"Vice Admiral"},
-{service:2, category:4, name:"Admiral"},
-{service:2, category:4, name:"Admiral of the Fleet"},
+      { service: 2, category: 4, name: "Sub Lieutenant" },
+      { service: 2, category: 4, name: "Lieutenant (IN)" },
+      { service: 2, category: 4, name: "Lt.Commander" },
+      { service: 2, category: 4, name: "Commander" },
+      { service: 2, category: 4, name: "Captain (IN)" },
+      { service: 2, category: 4, name: "Commodore" },
+      { service: 2, category: 4, name: "Rear Admiral" },
+      { service: 2, category: 4, name: "Vice Admiral" },
+      { service: 2, category: 4, name: "Admiral" },
+      { service: 2, category: 4, name: "Admiral of the Fleet" },
 
-/* ================= AIR FORCE ================= */
+      /* ================= AIR FORCE ================= */
 
-{service:3, category:1, name:"Aircraftsman"},
-{service:3, category:1, name:"Leading Aircraftsman"},
-{service:3, category:1, name:"Corporal"},
-{service:3, category:1, name:"Sergeant"},
+      { service: 3, category: 1, name: "Aircraftsman" },
+      { service: 3, category: 1, name: "Leading Aircraftsman" },
+      { service: 3, category: 1, name: "Corporal" },
+      { service: 3, category: 1, name: "Sergeant" },
 
-{service:3, category:2, name:"Junior Warrant Officer"},
-{service:3, category:2, name:"Warrant Officer"},
-{service:3, category:2, name:"Master Warrant Officer"},
+      { service: 3, category: 2, name: "Junior Warrant Officer" },
+      { service: 3, category: 2, name: "Warrant Officer" },
+      { service: 3, category: 2, name: "Master Warrant Officer" },
 
-{service:3, category:3, name:"Honorary Flying Officer"},
-{service:3, category:3, name:"Honorary Flight Lieutenant"},
+      { service: 3, category: 3, name: "Honorary Flying Officer" },
+      { service: 3, category: 3, name: "Honorary Flight Lieutenant" },
 
-{service:3, category:4, name:"Flying Officer"},
-{service:3, category:4, name:"Flight Lieutenant"},
-{service:3, category:4, name:"Squadron Leader"},
-{service:3, category:4, name:"Wing Commander"},
-{service:3, category:4, name:"Group Captain"},
-{service:3, category:4, name:"Air Commodore"},
-{service:3, category:4, name:"Air Vice Marshal"},
-{service:3, category:4, name:"Air Marshal"},
-{service:3, category:4, name:"Air Chief Marshal"},
-{service:3, category:4, name:"Marshal of the Air Force"},
+      { service: 3, category: 4, name: "Flying Officer" },
+      { service: 3, category: 4, name: "Flight Lieutenant" },
+      { service: 3, category: 4, name: "Squadron Leader" },
+      { service: 3, category: 4, name: "Wing Commander" },
+      { service: 3, category: 4, name: "Group Captain" },
+      { service: 3, category: 4, name: "Air Commodore" },
+      { service: 3, category: 4, name: "Air Vice Marshal" },
+      { service: 3, category: 4, name: "Air Marshal" },
+      { service: 3, category: 4, name: "Air Chief Marshal" },
+      { service: 3, category: 4, name: "Marshal of the Air Force" },
 
-/* ================= OTHERS ================= */
+      /* ================= OTHERS ================= */
 
-{service:4, category:5, name:"Others"}
+      { service: 4, category: 5, name: "Others" }
 
-];
+    ];
 
     /* ===========================================
     SERVICE CHANGE
@@ -1418,34 +1494,34 @@ ${item.name}
     /* ===========================================
     RANK Category CHANGE
     =========================================== */
-document.getElementById("rank_Category")
-  .addEventListener("change", function () {
+    document.getElementById("rank_Category")
+      .addEventListener("change", function () {
 
-    const serviceId = parseInt(
-      document.getElementById("service").value
-    );
+        const serviceId = parseInt(
+          document.getElementById("service").value
+        );
 
-    const categoryId = parseInt(this.value);
+        const categoryId = parseInt(this.value);
 
-    const rankDropdown = document.getElementById("rank");
+        const rankDropdown = document.getElementById("rank");
 
-    rankDropdown.innerHTML =
-      '<option value="">Select Rank</option>';
+        rankDropdown.innerHTML =
+          '<option value="">Select Rank</option>';
 
-    const filteredRanks = ranks.filter(item =>
-      item.service === serviceId &&
-      item.category === categoryId
-    );
+        const filteredRanks = ranks.filter(item =>
+          item.service === serviceId &&
+          item.category === categoryId
+        );
 
-    filteredRanks.forEach(item => {
+        filteredRanks.forEach(item => {
 
-      rankDropdown.innerHTML += `
+          rankDropdown.innerHTML += `
         <option value="${item.name}">
           ${item.name}
         </option>`;
-    });
+        });
 
-  });
+      });
 
     /* ===========================================
     SAVE DATA
@@ -1543,99 +1619,99 @@ document.getElementById("rank_Category")
 
         //   body: JSON.stringify(formData),
         // })
-          // .then((response) => response.text())
+        // .then((response) => response.text())
 
-          // .then((data) => {
-          //   document.getElementById("msg").innerHTML = data;
+        // .then((data) => {
+        //   document.getElementById("msg").innerHTML = data;
 
-          //   document.getElementById("bookingForm").reset();
+        //   document.getElementById("bookingForm").reset();
 
-          //   document.getElementById("edit_id").value = "";
+        //   document.getElementById("edit_id").value = "";
 
-          //   loadData();
-          // });
+        //   loadData();
+        // });
       });
 
     /* ===========================================
 LOAD TABLE DATA
 =========================================== */
 
-//     function loadData() {
-//       fetch("fetch.php")
-//         .then((response) => response.json())
+    //     function loadData() {
+    //       fetch("fetch.php")
+    //         .then((response) => response.json())
 
-//         .then((data) => {
-//           let table = "";
+    //         .then((data) => {
+    //           let table = "";
 
-//           data.forEach(function (row) {
-//             table += `
+    //           data.forEach(function (row) {
+    //             table += `
 
-// <tr>
+    // <tr>
 
-// <td>
+    // <td>
 
-// <button class="edit-btn"
-// onclick="editData(${row.id})">
+    // <button class="edit-btn"
+    // onclick="editData(${row.id})">
 
-// Edit
+    // Edit
 
-// </button>
+    // </button>
 
-// <br><br>
+    // <br><br>
 
-// <button class="delete-btn"
-// onclick="deleteData(${row.id})">
+    // <button class="delete-btn"
+    // onclick="deleteData(${row.id})">
 
-// Delete
+    // Delete
 
-// </button>
+    // </button>
 
-// </td>
+    // </td>
 
-// <td>${row.id}</td>
-// <td>${row.application_no}</td>
-// <td>${row.date}</td>
-// <td>${row.Category}</td>
-// <td>${row.service}</td>
-// <td>${row.rank_Category}</td>
-// <td>${row.rank_name}</td>
-// <td>${row.service_no}</td>
-// <td>${row.name}</td>
-// <td>${row.mobile}</td>
-// <td>${row.email}</td>
-// <td>${row.country}</td>
-// <td>${row.state}</td>
-// <td>${row.district}</td>
-// <td>${row.address1}</td>
-// <td>${row.address2}</td>
-// <td>${row.pincode}</td>
-// <td>${row.adult}</td>
-// <td>${row.children}</td>
-// <td>${row.checkin_date}</td>
-// <td>${row.checkin_time}</td>
-// <td>${row.checkout_date}</td>
-// <td>${row.checkout_time}</td>
-// <td>${row.total_days}</td>
-// <td>${row.rooms_allotted}</td>
-// <td>${row.total_rooms}</td>
-// <td>${row.tariff}</td>
-// <td>${row.rental_charges}</td>
-// <td>${row.advance_paid}</td>
-// <td>${row.advance_txn}</td>
-// <td>${row.advance_date}</td>
-// <td>${row.balance_paid}</td>
-// <td>${row.balance_txn}</td>
-// <td>${row.balance_date}</td>
-// <td>${row.total_paid}</td>
+    // <td>${row.id}</td>
+    // <td>${row.application_no}</td>
+    // <td>${row.date}</td>
+    // <td>${row.Category}</td>
+    // <td>${row.service}</td>
+    // <td>${row.rank_Category}</td>
+    // <td>${row.rank_name}</td>
+    // <td>${row.service_no}</td>
+    // <td>${row.name}</td>
+    // <td>${row.mobile}</td>
+    // <td>${row.email}</td>
+    // <td>${row.country}</td>
+    // <td>${row.state}</td>
+    // <td>${row.district}</td>
+    // <td>${row.address1}</td>
+    // <td>${row.address2}</td>
+    // <td>${row.pincode}</td>
+    // <td>${row.adult}</td>
+    // <td>${row.children}</td>
+    // <td>${row.checkin_date}</td>
+    // <td>${row.checkin_time}</td>
+    // <td>${row.checkout_date}</td>
+    // <td>${row.checkout_time}</td>
+    // <td>${row.total_days}</td>
+    // <td>${row.rooms_allotted}</td>
+    // <td>${row.total_rooms}</td>
+    // <td>${row.tariff}</td>
+    // <td>${row.rental_charges}</td>
+    // <td>${row.advance_paid}</td>
+    // <td>${row.advance_txn}</td>
+    // <td>${row.advance_date}</td>
+    // <td>${row.balance_paid}</td>
+    // <td>${row.balance_txn}</td>
+    // <td>${row.balance_date}</td>
+    // <td>${row.total_paid}</td>
 
-// </tr>
+    // </tr>
 
-// `;
-//           });
+    // `;
+    //           });
 
-//           document.querySelector("#bookingTable tbody").innerHTML = table;
-//         });
-//     }
+    //           document.querySelector("#bookingTable tbody").innerHTML = table;
+    //         });
+    //     }
 
 
   </script>
