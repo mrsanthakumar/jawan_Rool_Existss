@@ -488,38 +488,46 @@ AUTO CALCULATE CHARGES
 /* ===========================================
 AUTO CALCULATE TOTAL DAYS
 =========================================== */
-
 function calculateTotalDays() {
 
   const checkinDate = document.getElementById("checkin_date").value;
   const checkoutDate = document.getElementById("checkout_date").value;
-  const checkinTime = document.getElementById("checkin_time").value;
-  const checkoutTime = document.getElementById("checkout_time").value;
+  const checkinTime = parseInt(document.getElementById("checkin_time").value);
+  const checkoutTime = parseInt(document.getElementById("checkout_time").value);
 
-  if (!checkinDate || !checkoutDate || checkinTime === "" || checkoutTime === "") {
-    document.getElementById("total_days").value = "";
+  const totalDaysField = document.getElementById("total_days");
+
+  if (!checkinDate || !checkoutDate) {
+    totalDaysField.value = "";
     return;
   }
 
-  const start = new Date(`${checkinDate}T${checkinTime.padStart(2, '0')}:00:00`);
-  const end = new Date(`${checkoutDate}T${checkoutTime.padStart(2, '0')}:00:00`);
+  const startDate = new Date(checkinDate);
+  const endDate = new Date(checkoutDate);
 
-  if (end < start) {
-    document.getElementById("total_days").value = 0;
-    return;
-  }
-
-  const diffMs = end - start;
+  // Difference in calendar days
+  const diffMs = endDate - startDate;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  let totalDays = diffDays + 1;
-
-  // If checkout time is earlier than checkin time, don't count the last day
-  if (parseInt(checkoutTime) < parseInt(checkinTime)) {
-    totalDays--;
+  if (diffDays < 0) {
+    totalDaysField.value = 0;
+    return;
   }
 
-  document.getElementById("total_days").value = Math.max(totalDays, 1);
+  let totalDays = diffDays;
+
+  // Business rule:
+  // Checkout after 09:00 AM counts as an extra day
+  if (checkoutTime > 9) {
+    totalDays += 1;
+  }
+
+  // Same-day booking handling
+  if (diffDays === 0) {
+    totalDays = checkoutTime > 9 ? 1 : 0;
+  }
+
+  totalDaysField.value = totalDays;
 
   calculateCharges();
 }
